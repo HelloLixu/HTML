@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Course Table</title>
+    <style>
+        #main{
+            border-radius: 20px;
+            width:100%;
+            margin: auto;
+            positon:absolute;
+            left:0;
+            right:0;
+            border-width: 5px;
+            border-left:2px solid black;
+            border-right:2px solid black;
+            display: block;
+        }
+        #table{
+            position: relative;
+            left:0px;
+            border-radius: 2px;
+        }
+        caption{
+            font-size: larger;
+            font-family: "Century Schoolbook L";
+        }
+        p{
+            text-align: center;
+        }
+        th{
+            background-color: cornflowerblue;
+            border-radius: 10px;
+        }
+        .time{
+            background-color: coral;
+        }
+        td{
+            width:170px;
+            border-radius: 7px;
+        }
+    </style>
+    <script>
+        var ids=new Array('1_Mon','1_Tue','1_Wed','1_Thu','1_Fri','1_Sat','1_Sun',
+                    '2_Mon','2_Tue','2_Wed','2_Thu','2_Fri','2_Sat','2_Sun',
+                    '3_Mon','3_Tue','3_Wed','3_Thu','3_Fri','3_Sat','3_Sun',
+                    '4_Mon','4_Tue','4_Wed','4_Thu','4_Fri','4_Sat','4_Sun',
+                    '5_Mon','5_Tue','5_Wed','5_Thu','5_Fri','5_Sat','5_Sun',
+                    '6_Mon','6_Tue','6_Wed','6_Thu','6_Fri','6_Sat','6_Sun',
+                    '7_Mon','7_Tue','7_Wed','7_Thu','7_Fri','7_Sat','7_Sun');
+        function $(id){
+            return document.getElementById(id);
+        }
+        function SetTableLocation() {
+            var dWidth = $('main').clientWidth;
+            var twidth = $('table').clientWidth;
+            $('table').style.left = (dWidth / 2 - twidth / 2) + 'px';
+            setTableBackground();
+        }
+        function setTableBackground() {
+            for(var i=0;i<ids.length;i++){
+                if($(ids[i] + '_Class').innerHTML == ''){
+                    $(ids[i]).style.backgroundColor="cyan";
+                }else{
+                    $(ids[i]).style.backgroundColor="cornsilk";
+                    $(ids[i]).style.color='black';
+                }
+            }
+        }
+        var week=setInterval(setDayCourseBackground,1000);
+        function setDayCourseBackground() {
+            var d=new Date();
+            OpIds(d.getDay()-1);
+            var week='';
+            switch(d.getDay()){
+                case 1:
+                    week='_Mon';
+                    break;
+                case 2:
+                    week='_Tue';
+                    break;
+                case 3:
+                    week='_Wed';
+                    break;
+                case 4:
+                    week='_Thu';
+                    break;
+                case 5:
+                    week='_Fri';
+                    break;
+                case 6:
+                    week='_Sat';
+                    break;
+                case 7:
+                    week='_Sun';
+                    break;
+            }
+            var id=GetNo(d) + week;
+            if($(id +'_Class').innerHTML != ''){
+                $(id).style.color='red';
+                $('display').innerHTML='Current time:' + d.toLocaleTimeString() + week + '\t\tCurrent course:' + $(id +'_Class').innerHTML + $(id + '_Room').innerHTML;
+            }else{
+                $('display').innerHTML='Current time:' + d.toLocaleTimeString() + week + '\t\tNow you are free';
+            }
+        }
+        function GetNo(d){
+            var year = d.getFullYear();
+            var month = d.getMonth() + 1;
+            month = month < 10 ? '0' + month : month;
+            var day = d.getDate();
+            var millseconds=d.getTime();
+            day = day < 10 ? '0' + day : day;
+            var dates=new Array(new Date(year + '/' + month + '/' + day + ' 08:00:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 09:50:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 10:10:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 12:00:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 12:10:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 14:00:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 14:10:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 16:00:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 16:20:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 18:10:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 19:00:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 20:50:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 21:00:00').getTime(),
+                                new Date(year + '/' + month + '/' + day + ' 21:50:00').getTime());
+           for(var i=0;i<dates.length;i+=2){
+               if(millseconds >=dates[i] && millseconds <=dates[i+1]){
+                   return i/2+1;
+               }
+           }
+        }
+        function OpIds(index){
+            setTableBackground();
+            for(var i=index;i<ids.length;i+=7){
+                $(ids[i]).style.backgroundColor='darkcyan';
+            }
+        }
+        function AddCourse() {
+            $('pop').style.display='block';
+        }
+        function InsertTable() {
+            var ctime=$('time').selectedIndex;
+            var cday=$('day').selectedIndex;
+            var cname=$('course').value;
+            var croom=$('room').value;
+            var t=$('time').options[ctime].value;
+            var d=$('day').options[cday].value;
+            if(cname != '' && croom != ''){
+                $(t + '_' + d + '_Class').innerHTML=cname;
+                $(t + '_' + d + '_Room').innerHTML='@' + croom;
+            }
+            $('pop').style.display='none';
+            $('course').value='';
+            $('room').value='';
+            setTableBackground();
+        }
+        function CancelInsert() {
+            $('pop').style.display='none';
+            $('course').value='';
+            $('room').value='';
+        }
+    </script>
+</head>
+<body onload="SetTableLocation();" onresize="SetTableLocation();">
+   <div id="main">
+        <table border="1" id="table">
+            <caption>Lixu's Course Table</caption>
+            <thead>
+                <tr>
+                    <th style="background-color: chartreuse;">
+                        <button onclick="AddCourse();" style="display: block;margin: 0 auto;">
+                            <strong style="color:red;">+</strong>
+                        </button>
+                    </th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                    <th>Sunday</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            1
+                        </h4>
+                        <p>
+                          8:00-9:50
+                        </p>
+                    </td>
+                    <td id="1_Mon">
+                        <h5 align="center" id="1_Mon_Class"></h5>
+                        <p id="1_Mon_Room"></p>
+                    </td>
+                    <td id="1_Tue">
+                        <h5 align="center" id="1_Tue_Class"></h5>
+                        <p id="1_Tue_Room"></p>
+                    </td>
+                    <td id="1_Wed">
+                        <h5 align="center" id="1_Wed_Class"></h5>
+                        <p id="1_Wed_Room"></p>
+                    </td>
+                    <td id="1_Thu">
+                        <h5 align="center" id="1_Thu_Class"></h5>
+                        <p id="1_Thu_Room"></p>
+                    </td>
+                    <td id="1_Fri">
+                        <h5 align="center" id="1_Fri_Class"></h5>
+                        <p id="1_Fri_Room"></p>
+                    </td>
+                    <td id="1_Sat">
+                        <h5 align="center" id="1_Sat_Class"></h5>
+                        <p id="1_Sat_Room"></p>
+                    </td>
+                    <td id="1_Sun">
+                        <h5 align="center" id="1_Sun_Class"></h5>
+                        <p id="1_Sun_Room"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            2
+                        </h4>
+                        <p>
+                          10:10-12:00
+                        </p>
+                    </td>
+                    <td id="2_Mon">
+                        <h5 align="center" id="2_Mon_Class">
+                            Android Programming
+                        </h5>
+                        <p id="2_Mon_Room">
+                            @YF508
+                        </p>
+                    </td>
+                    <td id="2_Tue">
+                        <h5 align="center" id="2_Tue_Class">
+                            Computer Network
+                        </h5>
+                        <p id="2_Tue_Room">
+                            @YF510
+                        </p>
+                    </td>
+                    <td id="2_Wed">
+                        <h5 align="center" id="2_Wed_Class"></h5>
+                        <p id="2_Wed_Room"></p>
+                    </td>
+                    <td id="2_Thu">
+                        <h5 align="center" id="2_Thu_Class">
+                            Computer Network
+                        </h5>
+                        <p id="2_Thu_Room">
+                            @YF401
+                        </p>
+                    </td>
+                    <td id="2_Fri">
+                        <h5 align="center" id="2_Fri_Class">
+                            Web Programming
+                        </h5>
+                        <p id="2_Fri_Room">
+                            @YF305
+                        </p>
+                    </td>
+                    <td id="2_Sat">
+                        <h5 align="center" id="2_Sat_Class"></h5>
+                        <p id="2_Sat_Room"></p>
+                    </td>
+                    <td id="2_Sun">
+                        <h5 align="center" id="2_Sun_Class"></h5>
+                        <p id="2_Sun_Room"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            3
+                        </h4>
+                        <p>
+                          12:10-14:00
+                        </p>
+                    </td>
+                    <td id="3_Mon">
+                        <h5 align="center" id="3_Mon_Class"></h5>
+                        <p id="3_Mon_Room"></p>
+                    </td>
+                    <td id="3_Tue">
+                        <h5 align="center" id="3_Tue_Class"></h5>
+                        <p id="3_Tue_Room"></p>
+                    </td>
+                    <td id="3_Wed">
+                        <h5 align="center" id="3_Wed_Class"></h5>
+                        <p id="3_Wed_Room"></p>
+                    </td>
+                    <td id="3_Thu">
+                        <h5 align="center" id="3_Thu_Class"></h5>
+                        <p id="3_Thu_Room"></p>
+                    </td>
+                    <td id="3_Fri">
+                        <h5 align="center" id="3_Fri_Class"></h5>
+                        <p id="3_Fri_Room"></p>
+                    </td>
+                    <td id="3_Sat">
+                        <h5 align="center" id="3_Sat_Class">
+                            Web Programming
+                        </h5>
+                        <p id="3_Sat_Room">
+                            @YF207
+                        </p>
+                    </td>
+                    <td id="3_Sun">
+                        <h5 align="center" id="3_Sun_Class"></h5>
+                        <p id="3_Sun_Room"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            4
+                        </h4>
+                        <p>
+                          14:10-16:00
+                        </p>
+                    </td>
+                    <td id="4_Mon">
+                        <h5 align="center" id="4_Mon_Class"></h5>
+                        <p id="4_Mon_Room"></p>
+                    </td>
+                    <td id="4_Tue">
+                        <h5 align="center" id="4_Tue_Class"></h5>
+                        <p id="4_Tue_Room"></p>
+                    </td>
+                    <td id="4_Wed">
+                        <h5 align="center" id="4_Wed_Class">
+                            Database Practice
+                        </h5>
+                        <p id="4_Wed_Room">
+                            @YF615
+                        </p>
+                    </td>
+                    <td id="4_Thu">
+                        <h5 align="center" id="4_Thu_Class"></h5>
+                        <p id="4_Thu_Room"></p>
+                    </td>
+                    <td id="4_Fri">
+                        <h5 align="center" id="4_Fri_Class"></h5>
+                        <p id="4_Fri_Room"></p>
+                    </td>
+                    <td id="4_Sat">
+                        <h5 align="center" id="4_Sat_Class"></h5>
+                        <p id="4_Sat_Room"></p>
+                    </td>
+                    <td id="4_Sun">
+                        <h5 align="center" id="4_Sun_Class"></h5>
+                        <p id="4_Sun_Room"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            5
+                        </h4>
+                        <p>
+                          16:20-18:10
+                        </p>
+                    </td>
+                    <td id="5_Mon">
+                        <h5 align="center" id="5_Mon_Class">
+                            Software Laws
+                        </h5>
+                        <p id="5_Mon_Room">
+                            @YF207
+                        </p>
+                    </td>
+                    <td id="5_Tue">
+                        <h5 align="center" id="5_Tue_Class"></h5>
+                        <p id="5_Tue_Room"></p>
+                    </td>
+                    <td id="5_Wed">
+                        <h5 align="center" id="5_Wed_Class"></h5>
+                        <p id="5_Wed_Room"></p>
+                    </td>
+                    <td id="5_Thu">
+                        <h5 align="center" id="5_Thu_Class"></h5>
+                        <p id="5_Thu_Room"></p>
+                    </td>
+                    <td id="5_Fri">
+                        <h5 align="center" id="5_Fri_Class"></h5>
+                        <p id="5_Fri_Room"></p>
+                    </td>
+                    <td id="5_Sat">
+                        <h5 align="center" id="5_Sat_Class"></h5>
+                        <p id="5_Sat_Room"></p>
+                    </td>
+                    <td id="5_Sun">
+                        <h5 align="center" id="5_Sun_Class"></h5>
+                        <p id="5_Sun_Room"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            6
+                        </h4>
+                        <p>
+                          19:00-20:50
+                        </p>
+                    </td>
+                    <td id="6_Mon">
+                        <h5 align="center" id="6_Mon_Class"></h5>
+                        <p id="6_Mon_Room"></p>
+                    </td>
+                   <td id="6_Tue">
+                        <h5 align="center" id="6_Tue_Class"></h5>
+                        <p id="6_Tue_Room"></p>
+                    </td>
+                    <td id="6_Wed">
+                        <h5 align="center" id="6_Wed_Class"></h5>
+                        <p id="6_Wed_Room"></p>
+                    </td>
+                    <td id="6_Thu">
+                        <h5 align="center" id="6_Thu_Class"></h5>
+                        <p id="6_Thu_Room"></p>
+                    </td>
+                    <td id="6_Fri">
+                        <h5 align="center" id="6_Fri_Class"></h5>
+                        <p id="6_Fri_Room"></p>
+                    </td>
+                    <td id="6_Sat">
+                        <h5 align="center" id="6_Sat_Class"></h5>
+                        <p id="6_Sat_Room"></p>
+                    </td>
+                    <td id="6_Sun">
+                        <h5 align="center" id="6_Sun_Class"></h5>
+                        <p id="6_Sun_Room"></p>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="time">
+                        <h4 align="center">
+                            7
+                        </h4>
+                        <p>
+                          21:00-21:50
+                        </p>
+                    </td>
+                    <td id="7_Mon">
+                        <h5 align="center" id="7_Mon_Class"></h5>
+                        <p id="7_Mon_Room"></p>
+                    </td>
+                    <td id="7_Tue">
+                        <h5 align="center" id="7_Tue_Class"></h5>
+                        <p id="7_Tue_Room"></p>
+                    </td>
+                    <td id="7_Wed">
+                        <h5 align="center" id="7_Wed_Class"></h5>
+                        <p id="7_Wed_Room"></p>
+                    </td>
+                    <td id="7_Thu">
+                        <h5 align="center" id="7_Thu_Class"></h5>
+                        <p id="7_Thu_Room"></p>
+                    </td>
+                    <td id="7_Fri">
+                        <h5 align="center" id="7_Fri_Class"></h5>
+                        <p id="7_Fri_Room"></p>
+                    </td>
+                    <td id="7_Sat">
+                        <h5 align="center" id="7_Sat_Class"></h5>
+                        <p id="7_Sat_Room"></p>
+                    </td>
+                    <td id="7_Sun">
+                        <h5 align="center" id="7_Sun_Class"></h5>
+                        <p id="7_Sun_Room"></p>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <td colspan="8" id='display' style="font-family: 'Bitstream Vera Sans Mono';color: crimson;background-color: greenyellow"align="center">Current time:20:00 Current course:None</td>
+            </tfoot>
+        </table>
+   </div>
+    <div id="pop" style="position: absolute;left: 0px;right: 0px;top: 20%;bottom: 0px;margin: 0 auto;;display: none;width:30%;height:35%;border: 5px solid black;border-radius: 10px;background-color: blueviolet">
+        <div>
+            <h4 align="center">Insert Or Change Course</h4>
+            <form method="get" accept-charset="UTF-8">
+                <div align="left">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Time :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<select id="time" style="width: 40%">
+                            <option value="1">8:00-9:50</option>
+                            <option value="2">10:10-12:00</option>
+                            <option value="3">12:10-14:00</option>
+                            <option value="4">14:10-16:00</option>
+                            <option value="5">16:20-18:10</option>
+                            <option value="6">19:00-20:50</option>
+                            <option value="7">21:00-21:50</option>
+                        </select>
+                </div>
+                <br>
+                <div align="left">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Weekday :&nbsp;&nbsp;&nbsp;&nbsp;<select id="day" style="width: 40%">
+                            <option value="Mon">Mon</option>
+                            <option value="Tue">Tue</option>
+                            <option value="Wed">Wed</option>
+                            <option value="Thu">Thu</option>
+                            <option value="Fri">Fri</option>
+                            <option value="Sat">Sat</option>
+                            <option value="Sun">Sun</option>
+                        </select>
+                </div>
+                <br>
+                <div align="left">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Course :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="course" style="width: 40%" placeholder="Input Course Name...">
+                </div>
+                <br>
+                <div align="left">
+                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Class  :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="room" style="width: 40%" placeholder="Input Course Room..">
+                </div>
+                <br>
+            </form>
+        </div>
+        <hr style="border-width: 7px">
+        <div>
+           <div onclick="InsertTable()" style="float: left;width: 49%;height: 39px;border-right: 1px solid #CCCCCC;line-height: 39px;font-size: 1rem;" align="center">Done!</div>
+            <div onclick="CancelInsert()" style="float: right;width: 50%;height: 39px;line-height: 39px;font-size: 1rem" align="center">Cancel</div>
+        </div>
+    </div>
+</body>
+</html>
